@@ -1,0 +1,385 @@
+[
+    {
+        "model": "course.subject",
+        "pk": 1,
+        "fields": {
+            "title": "Programming",
+            "slug": "Courses related to coding and software development"
+        }
+    },
+    {
+        "model": "course.subject",
+        "pk": 2,
+        "fields": {
+            "title": "Language Learning",
+            "slug": "Courses for learning new languages"
+        }
+    },
+    {
+        "model": "course.subject",
+        "pk": 3,
+        "fields": {
+            "title": "Mathematics",
+            "slug": "Courses on mathematical concepts and problem-solving"
+        }
+    },
+    {
+        "model": "course.subject",
+        "pk": 4,
+        "fields": {
+            "title": "Science",
+            "slug": "Courses on scientific principles and experiments"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 1,
+        "fields": {
+            "name": "Python Basics",
+            "description": "Learn the fundamentals of Python programming.",
+            "price": "213.80",
+            "available_seat": 157,
+            "subject": 1,
+            "created_at": "2025-02-05T02:45:04.629624",
+            "updated_at": "2025-02-08T02:45:04.629624",
+            "duration":"9.5"
+            
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 2,
+        "fields": {
+            "name": "JavaScript for Beginners",
+            "description": "Introduction to JavaScript programming.",
+            "price": "46.92",
+            "available_seat": 174,
+            "subject": 1,
+            "created_at": "2025-02-02T15:45:04.629624",
+            "updated_at": "2025-02-02T15:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 3,
+        "fields": {
+            "name": "Web Development with Django",
+            "description": "Build web applications using Django.",
+            "price": "144.57",
+            "available_seat": 82,
+            "subject": 1,
+            "created_at": "2025-02-07T11:45:04.629624",
+            "updated_at": "2025-02-09T11:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 4,
+        "fields": {
+            "name": "Data Structures in Python",
+            "description": "Learn data structures using Python.",
+            "price": "339.21",
+            "available_seat": 74,
+            "subject": 1,
+            "created_at": "2025-01-23T08:45:04.629624",
+            "updated_at": "2025-01-28T08:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 5,
+        "fields": {
+            "name": "Machine Learning Basics",
+            "description": "Introduction to machine learning concepts.",
+            "price": "417.98",
+            "available_seat": 49,
+            "subject": 1,
+            "created_at": "2025-02-19T19:45:04.629624",
+            "updated_at": "2025-02-23T19:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 6,
+        "fields": {
+            "name": "C++ Programming",
+            "description": "Learn C++ programming from scratch.",
+            "price": "245.54",
+            "available_seat": 41,
+            "subject": 1,
+            "created_at": "2025-01-26T14:45:04.629624",
+            "updated_at": "2025-01-28T14:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 7,
+        "fields": {
+            "name": "React.js for Beginners",
+            "description": "Build UI with React.js.",
+            "price": "239.33",
+            "available_seat": 41,
+            "subject": 1,
+            "created_at": "2025-02-08T04:45:04.629624",
+            "updated_at": "2025-02-11T04:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 8,
+        "fields": {
+            "name": "Node.js Essentials",
+            "description": "Learn server-side development with Node.js.",
+            "price": "109.55",
+            "available_seat": 43,
+            "subject": 1,
+            "created_at": "2025-02-08T08:45:04.629624",
+            "updated_at": "2025-02-11T08:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 9,
+        "fields": {
+            "name": "SQL for Data Analysis",
+            "description": "Master SQL for data analysis.",
+            "price": "477.96",
+            "available_seat": 104,
+            "subject": 1,
+            "created_at": "2025-02-03T13:45:04.629624",
+            "updated_at": "2025-02-05T13:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 10,
+        "fields": {
+            "name": "Cybersecurity Basics",
+            "description": "Introduction to cybersecurity concepts.",
+            "price": "394.69",
+            "available_seat": 16,
+            "subject": 1,
+            "created_at": "2025-01-25T02:45:04.629624",
+            "updated_at": "2025-01-25T02:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 11,
+        "fields": {
+            "name": "English Speaking",
+            "description": "Improve your English speaking skills.",
+            "price": "37.44",
+            "available_seat": 187,
+            "subject": 2,
+            "created_at": "2025-01-22T14:45:04.629624",
+            "updated_at": "2025-01-27T14:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 12,
+        "fields": {
+            "name": "Spanish for Beginners",
+            "description": "Learn basic Spanish language skills.",
+            "price": "292.10",
+            "available_seat": 22,
+            "subject": 2,
+            "created_at": "2025-01-25T17:45:04.629624",
+            "updated_at": "2025-01-27T17:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 13,
+        "fields": {
+            "name": "French Grammar",
+            "description": "Master French grammar rules.",
+            "price": "86.74",
+            "available_seat": 160,
+            "subject": 2,
+            "created_at": "2025-01-22T02:45:04.629624",
+            "updated_at": "2025-01-23T02:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 14,
+        "fields": {
+            "name": "German Vocabulary",
+            "description": "Build your German vocabulary.",
+            "price": "320.85",
+            "available_seat": 153,
+            "subject": 2,
+            "created_at": "2025-02-19T14:45:04.629624",
+            "updated_at": "2025-02-22T14:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 15,
+        "fields": {
+            "name": "Italian Basics",
+            "description": "Learn the basics of Italian language.",
+            "price": "363.13",
+            "available_seat": 180,
+            "subject": 2,
+            "created_at": "2025-02-03T22:45:04.629624",
+            "updated_at": "2025-02-08T22:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 16,
+        "fields": {
+            "name": "Chinese Speaking",
+            "description": "Improve your Chinese speaking skills.",
+            "price": "40.06",
+            "available_seat": 109,
+            "subject": 2,
+            "created_at": "2025-01-28T23:45:04.629624",
+            "updated_at": "2025-02-02T23:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 17,
+        "fields": {
+            "name": "Korean for Beginners",
+            "description": "Learn basic Korean language skills.",
+            "price": "20.05",
+            "available_seat": 109,
+            "subject": 2,
+            "created_at": "2025-01-23T22:45:04.629624",
+            "updated_at": "2025-01-27T22:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 18,
+        "fields": {
+            "name": "Japanese Culture and Language",
+            "description": "Explore Japanese language and culture.",
+            "price": "31.42",
+            "available_seat": 119,
+            "subject": 2,
+            "created_at": "2025-02-13T06:45:04.629624",
+            "updated_at": "2025-02-17T06:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 19,
+        "fields": {
+            "name": "Arabic Grammar",
+            "description": "Master Arabic grammar rules.",
+            "price": "254.03",
+            "available_seat": 100,
+            "subject": 2,
+            "created_at": "2025-02-07T06:45:04.629624",
+            "updated_at": "2025-02-08T06:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 20,
+        "fields": {
+            "name": "Russian Basics",
+            "description": "Learn the basics of Russian language.",
+            "price": "67.97",
+            "available_seat": 35,
+            "subject": 2,
+            "created_at": "2025-01-31T20:45:04.629624",
+            "updated_at": "2025-01-31T20:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 21,
+        "fields": {
+            "name": "Algebra Fundamentals",
+            "description": "Learn the basics of algebra.",
+            "price": "76.42",
+            "available_seat": 174,
+            "subject": 3,
+            "created_at": "2025-02-05T11:45:04.629624",
+            "updated_at": "2025-02-07T11:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 22,
+        "fields": {
+            "name": "Calculus for Beginners",
+            "description": "Introduction to calculus concepts.",
+            "price": "340.05",
+            "available_seat": 150,
+            "subject": 3,
+            "created_at": "2025-01-27T16:45:04.629624",
+            "updated_at": "2025-01-27T16:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 23,
+        "fields": {
+            "name": "Geometry Essentials",
+            "description": "Learn geometric shapes and theorems.",
+            "price": "246.55",
+            "available_seat": 183,
+            "subject": 3,
+            "created_at": "2025-02-05T01:45:04.629624",
+            "updated_at": "2025-02-07T01:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 24,
+        "fields": {
+            "name": "Statistics and Probability",
+            "description": "Understand statistics and probability concepts.",
+            "price": "236.36",
+            "available_seat": 66,
+            "subject": 3,
+            "created_at": "2025-01-29T03:45:04.629624",
+            "updated_at": "2025-02-02T03:45:04.629624",
+            "duration":"9.5"
+        }
+    },
+    {
+        "model": "course.Course",
+        "pk": 25,
+        "fields": {
+            "name": "Trigonometry Basics",
+            "description": "Learn trigonometric functions and applications.",
+            "price": "440.88",
+            "available_seat": 196,
+            "subject": 3,
+            "created_at": "2025-02-21T09:45:04.629624",
+            "updated_at": "2025-02-25T09:45:04.629624",
+            "duration":"9.5"
+        }
+    }
+]
