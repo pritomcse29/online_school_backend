@@ -6,6 +6,9 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.title
+class SubjectImage(models.Model):
+    subject =  models.ForeignKey(Subject,on_delete=models.CASCADE,related_name='subjectImage')
+    image = models.ImageField(upload_to='subject/image')
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -20,4 +23,8 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+class CourseImage(models.Model):
+    course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='courseImage')
+    image = models.ImageField(upload_to='course/image')
 

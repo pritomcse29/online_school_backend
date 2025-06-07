@@ -1,7 +1,8 @@
-from .models import Enrollment,EnrollmentItem,Course,Order,OrderItem
+from .models import Enrollment,EnrollmentItem,Course,Order,OrderItem,Review
 from rest_framework import serializers
 from django.db import transaction
-
+from order.models import adminTeacher
+from users.models import User
 class EnrollmentItemSerializer(serializers.ModelSerializer):
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     course_details = serializers.SerializerMethodField()
@@ -87,6 +88,46 @@ class OrderSerializer(serializers.ModelSerializer):
     #                total+=item.total_price
     #           order.total_price = total
     #           order.save()
+# class ReivewSerializer(serializers.ModelSerializer):
+#      course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
+#      class Meta:
+#           model = Review
+#           fields =["course","student","comment","rating"]
+          
+
+#      def create(self,validated_data):
+#                course_id = self.context['course_id']
+#             #    student = self.context['request'].user
+            
+#                review = Review.objects.create(course_id=course_id,**validated_data)
+#             #    review = Review.objects.create(course=course, student=student,**validated_data)
+#                return review
+
+class ReviewSerializer(serializers.ModelSerializer):
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
+
+    class Meta:
+        model = Review
+        fields = ["course", "student", "comment", "rating"]
+        read_only_fields = ['student'] 
+
+    def create(self, validated_data):
+        course = validated_data.pop('course', None)  
+        student = self.context['request'].user      
+        review = Review.objects.create(course=course, student=student, **validated_data)
+        return review
+class adminTeacherSerializer(serializers.ModelSerializer):
+    group_names = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User  # Or your custom user model
+        fields = ['first_name', 'last_name', 'email', 'group_names']
+
+    def get_group_names(self, obj):
+        # This will return a list of group names for each user
+        return [group.name for group in obj.groups.all()]
+
+
 
 
      

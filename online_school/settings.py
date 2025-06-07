@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'order',
     'users',
     'djoser',
-     "corsheaders",
+    "corsheaders",
+    'drf_yasg',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +134,9 @@ REST_FRAMEWORK = {
         
        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 SIMPLE_JWT = {
@@ -166,3 +171,9 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_HOST_USER = 'p29m35@gmail.com'
 EMAIL_HOST_PASSWORD = 'lgwt oexg qemd zjbs'
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
+STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]

@@ -47,7 +47,7 @@ class Order(models.Model):
 
     id = models.UUIDField(default=uuid4,editable=False,primary_key=True)
     student = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
-    status = models.CharField(choices=STATUS_CHOICES,default=PENDING)
+    status = models.CharField(choices=STATUS_CHOICES,default=PENDING,max_length=20)
     total_price = models.DecimalField(max_digits=10,decimal_places=2,default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -71,6 +71,20 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.course.name}"
+    
+class Review(models.Model):
+    course = models.ForeignKey(Course,on_delete=models.CASCADE)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    comment = models.TextField()
+    rating = models.IntegerField()
+
+    def __str__(self):
+        return f"Comment By {self.student.first_name} - for {self.course.name} Course"
+    
+class adminTeacher(models.Model):
+    name = models.CharField(max_length=50)
+    designation = models.CharField(max_length=100)
+    
 
 
 
