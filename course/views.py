@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
+from .filters import CourseFilter
  
 # from course.permission import isAdmin,IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,isStudent,isTeacher
 # Create your views here.
@@ -17,6 +18,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = [IsTeacherOrAdmins]
     filter_backends = [DjangoFilterBackend,OrderingFilter,SearchFilter]
+    filterset_class = CourseFilter
     filterset_fields = ['name']
     # filter_backends = [filters.SearchFilter]
     search_fields = ['name']
