@@ -134,19 +134,33 @@ REST_FRAMEWORK = {
         
        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+
+  
 }
+
+
 
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+
 }
 
 
 DJOSER = {
+     'EMAIL_FRONTEND_PROTOCOL':config('FRONTEND_PROTOCOL'),
+    'EMAIL_FRONTEND_DOMAIN':config('FRONTEND_DOMAIN'),
+    'EMAIL_FRONTEND_SITE_NAME':'Online School',
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'activate/{uid}/{token}',
@@ -162,6 +176,14 @@ DJOSER = {
    
 }
 
+# SWAGGER_SETTINGS = {
+#     'DEFAULT_FILTER_INSPECTORS': [
+#         'drf_yasg.inspectors.DjangoFilterInspector',
+#         'drf_yasg.inspectors.CoreAPICompatInspector',
+#     ],
+# }
+
+
 
 AUTHENTICATION_BACKENDS = ["djoser.auth_backends.LoginFieldBackend",]
 
@@ -171,6 +193,9 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_HOST_USER = 'p29m35@gmail.com'
 EMAIL_HOST_PASSWORD = 'lgwt oexg qemd zjbs'
+
+BACKEND_URL = config("BACKEND_URL")
+FRONTEND_URL = config("FRONTEND_URL")
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"

@@ -1,4 +1,5 @@
 from order.serializers import EnrollmentSerializer,EnrollmentItemSerializer,OrderSerializer,ReviewSerializer
+from course.serializers import CourseSerializer
 from order.models import Enrollment,EnrollmentItem,Order,OrderItem,Review,Course
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,24 +12,86 @@ from django.conf import settings
 from .serializers import adminTeacherSerializer
 from users.models import User
 from course.models import Course,Subject
+from decimal import Decimal
+from sslcommerz_lib import SSLCOMMERZ 
+from django.conf import settings as main_settings
+from django.http import HttpResponseRedirect
 # Create your views here.
-
 @api_view(['POST'])
 def Enrollment_view_create(request):
-    # user = request.data
-    # is_student = request.user.groups.filter(name='student').exists()
     if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
-        return Response({'message':'Only Student can enroll course'},status=status.HTTP_204_NO_CONTENT)
-    serializer = EnrollmentSerializer(data=request.data,context={'request':request})
-    if serializer.is_valid():
-        enrollment = serializer.save()
-        return Response ({
-            "message":"Enrollment cart is created",
-            "cart id":str(enrollment.id),
-            
-        },status=status.HTTP_201_CREATED)
+        return Response({'message':'Only Students can enroll courses'}, status=status.HTTP_403_FORBIDDEN)
+
+    data = request.data.get("courses", [])
+    if not data:
+        return Response({'message':'No course provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Get or create a single cart per user
+    enrollment, created = Enrollment.objects.get_or_create(student=request.user)
+
+    # Add each course into the enrollment/cart
+    for item in data:
+        course_id = item.get("course")
+        quantity = item.get("quantity", 1)
+        price =  item.get("price")
+        total_price = item.get("total_price")
+
+        # Skip duplicates
+        if EnrollmentItem.objects.filter(enroll=enrollment, course_id=course_id).exists():
+            continue
+        try:
+            course = Course.objects.get(id=course_id)
+            price = course.price  # Assuming Course model has a 'price' field
+            total_price = Decimal(price) * int(quantity)
+        except Course.DoesNotExist:
+            continue  # Or return error if strict
+
+        EnrollmentItem.objects.create(
+            enroll=enrollment,
+            course=course,
+            quantity=quantity,
+            price=price,
+            total_price=total_price
+        )
+
+    serializer = EnrollmentSerializer(enrollment)
+    #     EnrollmentItem.objects.create(
+    #         enroll=enrollment,
+    #         course_id=course_id,
+    #         quantity=quantity,
+    #         price = price,
+    #         total_price = total_price
+    #     )
+    # serializer = EnrollmentSerializer(enrollment)
+    return Response({
+        "message": "Courses added to your cart",
+        "cart_id": serializer.data
+    }, status=status.HTTP_201_CREATED)
+
+# @api_view(['POST'])
+# def Enrollment_view_create(request):
+#     # user = request.data
+#     # is_student = request.user.groups.filter(name='student').exists()
+#     if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
+#         return Response({'message':'Only Student can enroll course'},status=status.HTTP_204_NO_CONTENT)
+#     data = request.data.get("courses",[])
+
+#     if not data:
+#         return Response({'message':'No course Provided'}) 
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     enrollment,created = Enrollment.objects.get_or_create(student=request.user)
+
+
+#     serializer = EnrollmentSerializer(data=request.data,context={'request':request})
+#     if serializer.is_valid():
+#         enrollment = serializer.save()
+#         return Response ({
+#             "message":"Enrollment cart is created",
+#             "cart id":str(enrollment.id),
+            
+#         },status=status.HTTP_201_CREATED)
+    
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET'])
 def Enrollment_view(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name= 'student').exists():
@@ -39,6 +102,33 @@ def Enrollment_view(request):
          return Response ('No Course In this cart', status=status.HTTP_404_NOT_FOUND)
     serializer = EnrollmentSerializer(enrollment,many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['DELETE'])
+def Enrollment_Delete_view(request, pk):
+    if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
+        return Response({'message': 'Only Students can perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        enrollment = EnrollmentItem.objects.get(id=pk, enroll__student=request.user)
+    except Enrollment.DoesNotExist:
+        return Response({'message': 'Enrollment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    enrollment.delete()
+    return Response({'message': 'Enrollment deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+# @api_view(['DELETE'])
+# def Enrollment_Delete_view(request, pk):
+#     if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
+#         return Response({'message': 'Only students can delete enrollments.'}, status=status.HTTP_403_FORBIDDEN)
+
+#     try:
+#         enrollment = Enrollment.objects.get(student=request.user, id=pk)
+#     except Enrollment.DoesNotExist:
+#         return Response({'message': 'Enrollment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+#     enrollment.delete()
+#     return Response({'message': 'Enrollment deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['POST'])
 def Order_view(request):
@@ -66,8 +156,11 @@ def Order_view(request):
     if serializer.is_valid():
         with transaction.atomic():
             order = serializer.save()
+            # enrollment.enrollments.all().delete()
             # enrollment.status = Enrollment.CONFIRMED
             # enrollment.save()
+            enrollment.enrollments.all().delete()
+            # enrollment.items.all().delete()
         return Response({
             "message": "Order created successfully",
             "order_id": str(order.id),
@@ -86,6 +179,24 @@ def order_view_set(request):
     serializer = OrderSerializer(order,many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['PATCH'])
+def cancel_order(request, order_id):
+    if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
+        return Response({'message': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        order = Order.objects.get(id=order_id, student=request.user)
+    except Order.DoesNotExist:
+        return Response({'message': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if order.status != Order.PENDING:
+        return Response({'message': 'Only pending orders can be cancelled'}, status=status.HTTP_400_BAD_REQUEST)
+
+    order.status = Order.CANCELED
+    order.save()
+    return Response({'message': 'Order cancelled successfully'}, status=status.HTTP_200_OK)
+    
+
 @api_view(['GET'])
 def admin_view_set(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name="admin").exists():
@@ -98,13 +209,15 @@ def admin_view_set(request):
     thirty_days_ago = now() - timedelta(days=30)
     filter_records = Order.objects.filter(created_at__gt = seven_days_ago)
     filters_records_thirty = Order.objects.filter(created_at__gt = thirty_days_ago)
-    if not filter_records.exists():
-        return Response({"message":"There is no order record about seven days ago"})
-    if not filters_records_thirty.exists():
-        return Response({"message":"There is no order record about thirty days ago"})
+    all_order = Order.objects.all()
+    # if not filter_records.exists():
+    #     return Response({"message":"There is no order record about seven days ago"})
+    # if not filters_records_thirty.exists():
+    #     return Response({"message":"There is no order record about thirty days ago"})
     serializer_7 = OrderSerializer(filter_records,many=True)
     serializer_30 = OrderSerializer(filters_records_thirty,many=True)
     data={
+        "all_order":all_order,
         "last_7_days_orders":serializer_7.data,
         "last_30_days_orders":serializer_30.data,
         "Total_Course":course_count,
@@ -129,6 +242,60 @@ def count_view_set(request):
         "Total_Student":total_student,
     }
     return Response(data,status=status.HTTP_200_OK)   
+
+@api_view(['GET'])
+def teacher_dashboard_view(request):
+    if not request.user.groups.filter(name='teacher').exists():
+        return Response({'msg': 'Unauthorized'}, status=403)
+    
+    courses = Course.objects.filter(owner=request.user)
+    serializer = CourseSerializer(courses, many=True)
+
+    return Response({
+        "my_courses": serializer.data,
+        "total_courses": courses.count()
+    })
+
+@api_view(['GET'])
+def student_dashboard_view(request):
+    if not request.user.groups.filter(name='student').exists():
+        return Response({'msg': 'Unauthorized'}, status=403)
+
+    orders = Order.objects.filter(student=request.user)
+    serializer = OrderSerializer(orders, many=True)
+    return Response({
+        "my_orders": serializer.data,
+        "order_count": orders.count()
+    })
+@api_view(['POST'])
+def add_course_view(request):
+    if not request.user.groups.filter(name='teacher').exists():
+        return Response({'msg': 'Unauthorized'}, status=403)
+
+    serializer = CourseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(owner=request.user)  # Automatically assign teacher
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+@api_view(['PATCH'])
+def admin_update_order_status(request, order_id):
+    if not request.user.groups.filter(name='admin').exists():
+        return Response({'msg': 'Forbidden'}, status=403)
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({'msg': 'Order not found'}, status=404)
+
+    status_val = request.data.get('status')
+    if status_val not in [Order.CONFIRMED, Order.CANCELED]:
+        return Response({'msg': 'Invalid status'}, status=400)
+
+    order.status = status_val
+    order.save(update_fields=['status'])
+    return Response({'msg': 'Order status updated'})
+
 
 # @api_view(['POST'])
 # def review_create(request):
@@ -202,6 +369,63 @@ def adminTeacherView(request):
     # return Response(serializer.errors,status=status.HTTP_403_FORBIDDEN)
 
 
+@api_view(['POST'])
+def initiate_payment(request):
+    print(request.data)
+    user = request.user
+    amount = request.data.get("amount") 
+    order_id = request.data.get("order_id")   
+    print(user)
+    # num_items = request.data.get("numItems")
+    settings = { 'store_id': 'onlin6876330805605', 'store_pass': 'onlin6876330805605@ssl', 'issandbox': True }
+    sslcz = SSLCOMMERZ(settings)
+    post_body = {}
+    post_body['total_amount'] = amount
+    post_body['currency'] = "BDT"
+    post_body['tran_id'] = f"txn_{order_id}"
+    # post_body['success_url'] = "http://localhost:5173/dashboard/payment/success"
+    post_body['success_url'] = f"{main_settings.BACKEND_URL}/api/v1/payment/success/"
+    post_body['fail_url'] = f"{main_settings.BACKEND_URL}/api/v1/payment/fail/"
+    post_body['cancel_url'] = f"{main_settings.BACKEND_URL}/api/v1/payment/cancel/"
+    post_body['emi_option'] = 0
+    post_body['cus_name'] = f"{user.first_name} {user.last_name}"
+    post_body['cus_email'] = user.email
+    post_body['cus_phone'] = user.number
+    post_body['cus_add1'] = user.address
+    post_body['cus_city'] = "Dhaka"
+    post_body['cus_country'] = "Bangladesh"
+    post_body['shipping_method'] = "No"
+    post_body['multi_card_name'] = ""
+    # post_body['num_of_item'] = num_items
+    post_body['product_name'] = "E-Commerce Products"
+    post_body['product_category'] = "General"
+    post_body['product_profile'] = "general"
+    post_body['ship_name'] = f"{user.first_name} {user.last_name}"
+
+    response = sslcz.createSession(post_body) # API response
+    # print(response)
+
+    if response.get("status")=='SUCCESS':
+       return Response({"payment_url":response['GatewayPageURL']})
+    return Response({"error":"Payment initiation failed"},status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def payment_success(request):
+    print("Inside success")
+    order_id = request.data.get("tran_id").split('_')[1]
+    order = Order.objects.get(id=order_id)
+    order.status = "Confirmed"
+    order.save()
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/dashboard/order/")
 
+
+@api_view(['POST'])
+def payment_cancel(request):
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/dashboard/order/")
+
+
+@api_view(['POST'])
+def payment_fail(request):
+    print("Inside fail") 
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/dashboard/order/")

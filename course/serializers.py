@@ -1,5 +1,6 @@
 from course.models import Course,Subject,CourseImage,SubjectImage
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class courseImageSerializer(serializers.ModelSerializer):
     image =  serializers.ImageField()
@@ -35,4 +36,3 @@ class SubjectSerializer(serializers.ModelSerializer):
             return f"self.title"
 
 
-  

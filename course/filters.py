@@ -9,3 +9,5 @@ class CourseFilter(django_filters.FilterSet):
             'id' : ['exact'],
             'price' : ['gt','lt']
         }
+
+

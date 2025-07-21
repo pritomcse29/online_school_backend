@@ -6,35 +6,114 @@ from users.models import User
 class EnrollmentItemSerializer(serializers.ModelSerializer):
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     course_details = serializers.SerializerMethodField()
-
+    total_price = serializers.SerializerMethodField()
     class Meta:
         model = EnrollmentItem
-        fields =['id','course','course_details','quantity']
-        read_only_fields =['id','course_details']
+        fields =['id','course','course_details','quantity','total_price']
+        read_only_fields =['id','course_details','total_price']
 
     def get_course_details(self,obj):
         return {"id":obj.course.id,"name":obj.course.name} 
-    
-class EnrollmentSerializer(serializers.ModelSerializer):
-    courses = EnrollmentItemSerializer(many=True,source='enrollments')
+    def get_total_price(self,obj):
+        return obj.quantity * obj.course.price 
+         
+# Write-only serializer
+class EnrollmentItemWriteSerializer(serializers.ModelSerializer):
     class Meta:
-        model =  Enrollment
-        fields =['id','courses','student','enrolled_at']
-        read_only_fields = ['id','courses','student','enrolled_at']
+        model = EnrollmentItem
+        fields = ['course', 'quantity']
 
-    def validate(self,data):
-            if not data.get("courses"):
-                raise serializers.ValidationError("At least one course needed")
-            return data
-       
+# Updated EnrollmentSerializer
+class EnrollmentSerializer(serializers.ModelSerializer):
+    courses = EnrollmentItemWriteSerializer(many=True, write_only=True)
+    enrollments = EnrollmentItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Enrollment
+        fields = ['id', 'courses', 'enrollments', 'student', 'enrolled_at']
+        read_only_fields = ['id', 'student', 'enrolled_at', 'enrollments']
+
+    def validate(self, data):
+        if not data.get("courses"):
+            raise serializers.ValidationError("At least one course is required.")
+        return data
+
     def create(self, validated_data):
-            courses_data = validated_data.pop('courses')
-            student = self.context['request'].user
-            with transaction.atomic():
-                enrollment = Enrollment.objects.create(student=student)
-                for course_data in courses_data:
-                    EnrollmentItem.objects.create(enroll=enrollment, **course_data)
-            return enrollment
+        courses_data = validated_data.pop('courses')
+        student = self.context['request'].user
+        with transaction.atomic():
+            enrollment = Enrollment.objects.create(student=student)
+            for item in courses_data:
+                EnrollmentItem.objects.create(
+                    enroll=enrollment,
+                    course=item['course'],
+                    quantity=item.get('quantity', 1)
+                )
+        return enrollment
+
+
+# class EnrollmentSerializer(serializers.ModelSerializer):
+#     courses = EnrollmentItemSerializer(many=True, source='enrollments')
+#     enrollments = EnrollmentItemSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = Enrollment
+#         fields = ['id', 'courses', 'enrollments', 'student','enrolled_at']
+#         read_only_fields = ['id', 'student', 'enrolled_at', 'enrollments',]
+
+#     def validate(self, data):
+#         if not data.get("enrollments") and not data.get("courses"):
+#             raise serializers.ValidationError("At least one course needed")
+#         return data
+
+#     def create(self, validated_data):
+#         courses_data = validated_data.pop('enrollments', None) or validated_data.pop('courses')
+#         student = self.context['request'].user
+#         with transaction.atomic():
+#             enrollment = Enrollment.objects.create(student=student)
+#             for item in courses_data:
+#                 clean_data = {
+#                     "course": item["course"],
+#                     "quantity": item.get("quantity", 1)
+#                 }
+#                 EnrollmentItem.objects.create(enroll=enrollment, **clean_data)
+
+#     #         for course_data in courses_data:
+#     #             # EnrollmentItem.objects.create(enroll=enrollment, **course_data)
+#     #             EnrollmentItem.objects.create(
+#     #     enroll=enrollment,
+#     #     course=course_data["course"],
+#     #     quantity=course_data.get("quantity", 1)
+#     # )
+#         return enrollment
+
+
+# class EnrollmentSerializer(serializers.ModelSerializer):
+#     # courses = EnrollmentItemSerializer(many=True,source='enrollments')
+#     # courses = EnrollmentItemSerializer(many=True, source ='enrollments' )
+
+#     enrollments = EnrollmentItemSerializer(many=True, read_only=True)
+
+
+#     class Meta:
+#         model =  Enrollment
+#         fields =['id','enrollments','student','enrolled_at']
+#         read_only_fields = ['id','student','enrolled_at']
+#         # read_only_fields = ['id','courses','student','enrolled_at']
+
+#     def validate(self,data):
+#             if not data.get("enrollments"):
+#                 raise serializers.ValidationError("At least one course needed")
+#             return data
+       
+#     def create(self, validated_data):
+#             courses_data = validated_data.pop('enrollments')
+#             student = self.context['request'].user
+#             with transaction.atomic():
+#                 enrollment = Enrollment.objects.create(student=student)
+#                 for course_data in courses_data:
+#                     EnrollmentItem.objects.create(enroll=enrollment, **course_data)
+#             return enrollment
 class OrderItemSerializer(serializers.ModelSerializer):
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     course_details = serializers.SerializerMethodField()
@@ -65,7 +144,7 @@ class OrderSerializer(serializers.ModelSerializer):
                raise serializers.ValidationError("Minimum one Item must be needed")
           return data
      def create(self, validated_data):
-        items_data = validated_data.pop('items')
+        items_data = validated_data.pop('orders')
         student = self.context['request'].user
         with transaction.atomic():
             order = Order.objects.create(student=student, total_price=0)

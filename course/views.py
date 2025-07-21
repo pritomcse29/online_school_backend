@@ -8,7 +8,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
-from .filters import CourseFilter
+from course.filters import CourseFilter
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
  
 # from course.permission import isAdmin,IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,isStudent,isTeacher
 # Create your views here.
@@ -19,15 +21,28 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsTeacherOrAdmins]
     filter_backends = [DjangoFilterBackend,OrderingFilter,SearchFilter]
     filterset_class = CourseFilter
-    filterset_fields = ['name']
+    # filterset_fields = ['name']
     # filter_backends = [filters.SearchFilter]
     search_fields = ['name']
-    OrderingFilter = ['price','updated_at']
+    ordering_fields = ['price','updated_at']
     pagination_class = PageNumberPagination
     def get_permissions(self):
       if self.action in ['create', 'update', 'partial_update', 'destroy']:
           return [IsTeacherOrAdmins(),IsOwnerOrReadOnly()]
       return [IsAuthenticatedOrReadOnly()]
+    @swagger_auto_schema(
+            operation_summary='Retrieve a list of products',
+            manual_parameters=[
+                openapi.Parameter('search', openapi.IN_QUERY, description="Search by name or description", type=openapi.TYPE_STRING),
+                openapi.Parameter('ordering', openapi.IN_QUERY, description="Order by price or updated_at", type=openapi.TYPE_STRING),
+                openapi.Parameter('id', openapi.IN_QUERY, description="Filter by course ID", type=openapi.TYPE_INTEGER),
+                openapi.Parameter('price__gt', openapi.IN_QUERY, description="Minimum price", type=openapi.TYPE_NUMBER),
+                openapi.Parameter('price__lt', openapi.IN_QUERY, description="Maximum price", type=openapi.TYPE_NUMBER),
+            ]
+        )
+    def list(self, request, *args, **kwargs):
+        """Retrieve all the products"""
+        return super().list(request, *args, **kwargs)
     # def get_queryset(self):
     #     user = self.request.user
     #     if user.role == 'teacher':

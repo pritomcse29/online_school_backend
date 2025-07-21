@@ -21,12 +21,15 @@ class Enrollment(models.Model):
     enrolled_at = models.DateTimeField(auto_now_add=True)
     # status = models.CharField(choices=STATUS_CHOICES,max_length=20,default=PENDING)
     def __str__(self):
-        return f"Enrollment of {self.student.first_name} {self.student.last_name}"
+        return f"Enrollment of {self.student.first_name} {self.student.last_name} {self.id}"
 
 class EnrollmentItem(models.Model):
     enroll = models.ForeignKey(Enrollment,on_delete=models.CASCADE,related_name='enrollments')
     course = models.ForeignKey(Course,on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    price = models.DecimalField(max_digits=10,decimal_places=2,default=Decimal('0.00'))
+    total_price  = models.DecimalField(max_digits=10,decimal_places=2,default=Decimal('0.00'))
+
 
     class Meta:
         unique_together = ['course','quantity']
