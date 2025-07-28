@@ -18,7 +18,13 @@ from django.conf import settings as main_settings
 from django.http import HttpResponseRedirect
 # Create your views here.
 @api_view(['POST'])
+
 def Enrollment_view_create(request):
+    """
+      This is enrollment page 
+        - Where a login user enroll a course.
+        - Others person has not access this page
+    """
     if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
         return Response({'message':'Only Students can enroll courses'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -94,6 +100,7 @@ def Enrollment_view_create(request):
 #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET'])
 def Enrollment_view(request):
+
     if not request.user.is_authenticated or not request.user.groups.filter(name= 'student').exists():
         return Response ({'message':'Only Student can view this'},status=status.HTTP_204_NO_CONTENT)
     enrollment = Enrollment.objects.filter(student = request.user).order_by('-enrolled_at')
@@ -102,6 +109,7 @@ def Enrollment_view(request):
          return Response ('No Course In this cart', status=status.HTTP_404_NOT_FOUND)
     serializer = EnrollmentSerializer(enrollment,many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+    
 @api_view(['DELETE'])
 def Enrollment_Delete_view(request, pk):
     if not request.user.is_authenticated or not request.user.groups.filter(name='student').exists():
@@ -209,15 +217,15 @@ def admin_view_set(request):
     thirty_days_ago = now() - timedelta(days=30)
     filter_records = Order.objects.filter(created_at__gt = seven_days_ago)
     filters_records_thirty = Order.objects.filter(created_at__gt = thirty_days_ago)
-    all_order = Order.objects.all()
-    # if not filter_records.exists():
-    #     return Response({"message":"There is no order record about seven days ago"})
-    # if not filters_records_thirty.exists():
-    #     return Response({"message":"There is no order record about thirty days ago"})
+    # all_order = Order.objects.all()
+    if not filter_records.exists():
+        return Response({"message":"There is no order record about seven days ago"})
+    if not filters_records_thirty.exists():
+        return Response({"message":"There is no order record about thirty days ago"})
     serializer_7 = OrderSerializer(filter_records,many=True)
     serializer_30 = OrderSerializer(filters_records_thirty,many=True)
     data={
-        "all_order":all_order,
+        # "all_order":all_order,
         "last_7_days_orders":serializer_7.data,
         "last_30_days_orders":serializer_30.data,
         "Total_Course":course_count,

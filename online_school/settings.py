@@ -185,7 +185,7 @@ DJOSER = {
 
 
 
-AUTHENTICATION_BACKENDS = ["djoser.auth_backends.LoginFieldBackend",]
+# AUTHENTICATION_BACKENDS = ["djoser.auth_backends.LoginFieldBackend",]
 
 EMAIL_BACKEND = config('EMAIL_BACKEND')
 EMAIL_HOST = config('EMAIL_HOST')
@@ -202,3 +202,17 @@ MEDIA_URL = "/media/"
 STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+    #   'Basic': {
+    #         'type': 'basic'
+    #   },
+      'JWT': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description':'Enter Your token in the format `JWT<token>`'
+      }
+   }
+}
