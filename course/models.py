@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from cloudinary.models import CloudinaryField
 class Subject(models.Model):
     title = models.CharField(max_length=100)
     slug = models.CharField(max_length=100)
@@ -26,5 +27,6 @@ class Course(models.Model):
 
 class CourseImage(models.Model):
     course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='courseImage')
-    image = models.ImageField(upload_to='course/image')
+    image = CloudinaryField('image')
+    # image = models.ImageField(upload_to='course/image')
 
