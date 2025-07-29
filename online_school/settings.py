@@ -17,8 +17,13 @@ SECRET_KEY = 'django-insecure-*joid9m4y#gsg^#3qdcn%5ugh4!d!irp%&y2tm4_x2o#=t6)h3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    ".vercel.app",
+    ".now.sh",
+    "127.0.0.1",
+    "localhost",
+    "online-school-backend-1.onrender.com"
+]
 AUTH_USER_MODEL = 'users.User'
 
 # Application definition
