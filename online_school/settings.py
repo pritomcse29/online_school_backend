@@ -22,7 +22,8 @@ ALLOWED_HOSTS = [
     ".now.sh",
     "127.0.0.1",
     "localhost",
-    "online-school-backend-1.onrender.com"
+    "online-school-backend-1.onrender.com",
+    "https://online-school-frontend-wbqk.vercel.app/""
 ]
 AUTH_USER_MODEL = 'users.User'
 
@@ -66,8 +67,8 @@ STATICFILES_STORAGE:"whitenoise.storage.CompressedStaticFilesStorage"
 ROOT_URLCONF = 'online_school.urls'
 
 CORS_ALLOWED_ORIGINS = [
-#   "http://127.0.0.1:8000",
-#   "http://localhost:5173",
+  "http://127.0.0.1:8000",
+  "http://localhost:5173",
   "https://online-school-backend-1.onrender.com/",
   "https://online-school-frontend-wbqk.vercel.app/"
 ]
