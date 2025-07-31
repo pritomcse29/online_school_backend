@@ -23,7 +23,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "online-school-backend-1.onrender.com",
-    "https://online-school-frontend-wbqk.vercel.app/""
+    "https://online-school-frontend-wbqk.vercel.app"
 ]
 AUTH_USER_MODEL = 'users.User'
 
