@@ -71,7 +71,6 @@ CORS_ALLOWED_ORIGINS = [
   "http://127.0.0.1:8000",
   "http://localhost:5173",
   "https://online-school-backend-1.onrender.com",
-  "https://online-school-frontend-wbqk.vercel.app/",
    "https://online-school-frontend-wbqk.vercel.app",
 
 ]
