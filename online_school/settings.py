@@ -67,11 +67,12 @@ STATICFILES_STORAGE:"whitenoise.storage.CompressedStaticFilesStorage"
 ROOT_URLCONF = 'online_school.urls'
 
 CORS_ALLOWED_ORIGINS = [
-  "http://127.0.0.1:8000",
-  "http://localhost:5173",
-  "http://online-school-backend-1.onrender.com",
-  "http://online-school-frontend-wbqk.vercel.app",
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "https://online-school-backend-1.onrender.com",
+    "https://online-school-frontend-wbqk.vercel.app",
 ]
+
 
 TEMPLATES = [
     {
