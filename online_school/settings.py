@@ -71,8 +71,7 @@ CORS_ALLOWED_ORIGINS = [
   "http://127.0.0.1:8000",
   "http://localhost:5173",
   "https://online-school-backend-1.onrender.com",
-   "https://online-school-frontend-wbqk.vercel.app",
-
+  "https://online-school-frontend-wbqk.vercel.app",
 ]
 
 TEMPLATES = [
@@ -185,7 +184,7 @@ SIMPLE_JWT = {
 
 
 DJOSER = {
-     'EMAIL_FRONTEND_PROTOCOL':config('FRONTEND_PROTOCOL'),
+    'EMAIL_FRONTEND_PROTOCOL':config('FRONTEND_PROTOCOL'),
     'EMAIL_FRONTEND_DOMAIN':config('FRONTEND_DOMAIN'),
     'EMAIL_FRONTEND_SITE_NAME':'Online School',
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
