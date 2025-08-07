@@ -23,6 +23,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "online-school-backend-1.onrender.com",
+    "online-school-backend-4.onrender.com"
 
 ]
 
@@ -31,6 +32,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://online-school-backend-1.onrender.com",
     "https://online-school-frontend-wbqk.vercel.app",
+    "https://online-school-backend-4.onrender.com"
 ]
 
 
