@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*joid9m4y#gsg^#3qdcn%5ugh4!d!irp%&y2tm4_x2o#=t6)h3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     ".vercel.app",
@@ -25,6 +25,22 @@ ALLOWED_HOSTS = [
     "online-school-backend-1.onrender.com",
 
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "https://online-school-backend-1.onrender.com",
+    "https://online-school-frontend-wbqk.vercel.app",
+]
+
+
+# # ✅ Allow credentials like cookies, auth headers
+# CORS_ALLOW_CREDENTIALS = True
+
+# # ✅ Development-এর জন্য সব origin allow করতে চাইলে (সতর্কতার সাথে ব্যবহার করুন)
+# # এটা শুধু ডেভেলপমেন্টের জন্য, LIVE-এ এটা রাখবেন না
+# CORS_ALLOW_ALL_ORIGINS = True
+
 AUTH_USER_MODEL = 'users.User'
 
 # Application definition
@@ -51,10 +67,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
-     "corsheaders.middleware.CorsMiddleware",
+    
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -65,13 +82,6 @@ MIDDLEWARE = [
 STATICFILES_STORAGE:"whitenoise.storage.CompressedStaticFilesStorage"
 
 ROOT_URLCONF = 'online_school.urls'
-
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000",
-    "http://localhost:5173",
-    "https://online-school-backend-1.onrender.com",
-    "https://online-school-frontend-wbqk.vercel.app",
-]
 
 
 TEMPLATES = [
@@ -95,23 +105,23 @@ WSGI_APPLICATION = 'online_school.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('dbname'),
-        'USER': config('user'),
-        'PASSWORD': config('password'),
-        'HOST': config('host'),
-        'PORT': config('port')
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('dbname'),
+#         'USER': config('user'),
+#         'PASSWORD': config('password'),
+#         'HOST': config('host'),
+#         'PORT': config('port')
+#     }
+# }
 
 
 # Password validation
