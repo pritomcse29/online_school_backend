@@ -36,6 +36,14 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://online-school-backend-1.onrender.com",
+    "https://online-school-frontend-wbqk.vercel.app",
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+]
+
+
 # # ✅ Allow credentials like cookies, auth headers
 # CORS_ALLOW_CREDENTIALS = True
 
