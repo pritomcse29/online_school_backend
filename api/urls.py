@@ -2,7 +2,7 @@ from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 from course.views import courseImageView,subjectImageView
 from course import views
-from order.views import payment_cancel,payment_fail,payment_success,initiate_payment,admin_update_order_status,add_course_view,student_dashboard_view,teacher_dashboard_view,cancel_order,Enrollment_Delete_view,count_view_set,adminTeacherView,Enrollment_view,Enrollment_view_create,Order_view,order_view_set,admin_view_set,reviewCreate
+from order.views import admin_dashboard_view,payment_cancel,payment_fail,payment_success,initiate_payment,admin_update_order_status,add_course_view,student_dashboard_view,teacher_dashboard_view,cancel_order,Enrollment_Delete_view,count_view_set,adminTeacherView,Enrollment_view,Enrollment_view_create,Order_view,order_view_set,admin_view_set,reviewCreate
 from rest_framework_nested import routers
 router = DefaultRouter()
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path('create-order/',Order_view, name='create-order'),
     path('order-view/',order_view_set,name="order-view-set"),
     path('admin-view-set/',admin_view_set,name='admin-view-set'),
+    path('admin/dashboard/', admin_dashboard_view, name='admin-dashboard'),
     path('admin-teacher/',adminTeacherView,name="admin-teacher"),
     path('count-view/',count_view_set,name="count-view"),
     # path('enrollment-item/<int:pk>/delete/', Enrollment_Delete_view, name='enrollment-item-delete'),

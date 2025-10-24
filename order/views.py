@@ -265,6 +265,20 @@ def teacher_dashboard_view(request):
     })
 
 @api_view(['GET'])
+def admin_dashboard_view(request):
+    if not request.user.groups.filter(name='admin').exists():
+        return Response({'msg': 'Unauthorized'}, status=403)
+    
+    courses = Course.objects.filter(owner=request.user)
+    serializer = CourseSerializer(courses, many=True)
+
+    return Response({
+        "my_courses": serializer.data,
+        "total_courses": courses.count()
+    }, status=200)
+
+
+@api_view(['GET'])
 def student_dashboard_view(request):
     if not request.user.groups.filter(name='student').exists():
         return Response({'msg': 'Unauthorized'}, status=403)
