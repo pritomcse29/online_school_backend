@@ -3,7 +3,7 @@ from course.serializers import CourseSerializer
 from order.models import Enrollment,EnrollmentItem,Order,OrderItem,Review,Course
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from django.db import transaction
 from datetime import datetime,timedelta
 from django.utils.timezone import now
@@ -16,6 +16,8 @@ from decimal import Decimal
 from sslcommerz_lib import SSLCOMMERZ 
 from django.conf import settings as main_settings
 from django.http import HttpResponseRedirect
+from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 @api_view(['POST'])
 
@@ -263,19 +265,33 @@ def teacher_dashboard_view(request):
         "my_courses": serializer.data,
         "total_courses": courses.count()
     })
-
+@csrf_exempt
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def admin_dashboard_view(request):
-    if not request.user.groups.filter(name='admin').exists():
-        return Response({'msg': 'Unauthorized'}, status=403)
+    
+    if not request.user.groups.filter(name="admin").exists():
+        return Response({"detail": "Forbidden"}, status=403)
     
     courses = Course.objects.filter(owner=request.user)
     serializer = CourseSerializer(courses, many=True)
-
     return Response({
         "my_courses": serializer.data,
         "total_courses": courses.count()
-    }, status=200)
+    })
+
+# @api_view(['GET'])
+# def admin_dashboard_view(request):
+#     if not request.user.groups.filter(name='admin').exists():
+#         return Response({'msg': 'Unauthorized'}, status=403)
+    
+#     courses = Course.objects.filter(owner=request.user)
+#     serializer = CourseSerializer(courses, many=True)
+
+#     return Response({
+#         "my_courses": serializer.data,
+#         "total_courses": courses.count()
+#     }, status=200)
 
 
 @api_view(['GET'])
