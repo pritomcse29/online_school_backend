@@ -9,16 +9,35 @@ class courseImageSerializer(serializers.ModelSerializer):
         fields =['id','image']
 class CourseSerializer(serializers.ModelSerializer):
     courseImage = courseImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Course
-        fields =['id','name','description','price','available_seat','created_at','updated_at','duration','subject','owner','courseImage']
-        read_only = ['created_at']
+        fields = [
+            'id', 'name', 'description', 'price', 'available_seat',
+            'created_at', 'updated_at', 'duration', 'subject', 'owner', 'courseImage'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
 
-        def perform_create(self, serializer):
-            serializer.save(owner=self.request.user)
+    def create(self, validated_data):
+        """
+        Automatically assign the logged-in user as owner when creating a course
+        """
+        request = self.context.get('request', None)
+        if request and hasattr(request, 'user'):
+            validated_data['owner'] = request.user
+        return super().create(validated_data)
+# class CourseSerializer(serializers.ModelSerializer):
+#     courseImage = courseImageSerializer(many=True, read_only=True)
+#     class Meta:
+#         model = Course
+#         fields =['id','name','description','price','available_seat','created_at','updated_at','duration','subject','owner','courseImage']
+#         read_only = ['created_at']
 
-        def __str__(self):
-            return f"self.name"
+#         def perform_create(self, serializer):
+#             serializer.save(owner=self.request.user)
+
+#         def __str__(self):
+#             return f"self.name"
 class SubjectImageSerializer(serializers.ModelSerializer):
     image = serializers.ImageField()
     class Meta:
