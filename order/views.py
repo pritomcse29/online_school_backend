@@ -206,36 +206,65 @@ def cancel_order(request, order_id):
     order.save()
     return Response({'message': 'Order cancelled successfully'}, status=status.HTTP_200_OK)
     
-
 @api_view(['GET'])
 def admin_view_set(request):
     if not request.user.is_authenticated or not request.user.groups.filter(name="admin").exists():
         return Response({"message":"only admin can view this"},status=status.HTTP_403_FORBIDDEN)
+    
     course_count = Course.objects.count()
     subject_count = Subject.objects.count()
-    total_mentor =  User.objects.filter(groups__name="teacher").count()
-    total_student =  User.objects.filter(groups__name="student").count()
-    seven_days_ago =  now()-timedelta(days=7)
+    total_mentor = User.objects.filter(groups__name="teacher").count()
+    total_student = User.objects.filter(groups__name="student").count()
+
+    seven_days_ago = now() - timedelta(days=7)
     thirty_days_ago = now() - timedelta(days=30)
-    filter_records = Order.objects.filter(created_at__gt = seven_days_ago)
-    filters_records_thirty = Order.objects.filter(created_at__gt = thirty_days_ago)
-    # all_order = Order.objects.all()
-    if not filter_records.exists():
-        return Response({"message":"There is no order record about seven days ago"})
-    if not filters_records_thirty.exists():
-        return Response({"message":"There is no order record about thirty days ago"})
-    serializer_7 = OrderSerializer(filter_records,many=True)
-    serializer_30 = OrderSerializer(filters_records_thirty,many=True)
-    data={
-        # "all_order":all_order,
-        "last_7_days_orders":serializer_7.data,
-        "last_30_days_orders":serializer_30.data,
-        "Total_Course":course_count,
-        "Total_Subject":subject_count,
-        "Total_Mentor":total_mentor,
-        "Total_Student":total_student,
+
+    last_7_orders = Order.objects.filter(created_at__gt=seven_days_ago)
+    last_30_orders = Order.objects.filter(created_at__gt=thirty_days_ago)
+
+    serializer_7 = OrderSerializer(last_7_orders, many=True)
+    serializer_30 = OrderSerializer(last_30_orders, many=True)
+
+    data = {
+        "last_7_days_orders": serializer_7.data,
+        "last_30_days_orders": serializer_30.data,
+        "Total_Course": course_count,
+        "Total_Subject": subject_count,
+        "Total_Mentor": total_mentor,
+        "Total_Student": total_student,
     }
-    return Response(data,status=status.HTTP_200_OK)    
+
+    return Response(data, status=status.HTTP_200_OK)
+
+# @api_view(['GET'])
+# def admin_view_set(request):
+#     if not request.user.is_authenticated or not request.user.groups.filter(name="admin").exists():
+#         return Response({"message":"only admin can view this"},status=status.HTTP_403_FORBIDDEN)
+#     course_count = Course.objects.count()
+#     subject_count = Subject.objects.count()
+#     total_mentor =  User.objects.filter(groups__name="teacher").count()
+#     total_student =  User.objects.filter(groups__name="student").count()
+#     seven_days_ago =  now()-timedelta(days=7)
+#     thirty_days_ago = now() - timedelta(days=30)
+#     filter_records = Order.objects.filter(created_at__gt = seven_days_ago)
+#     filters_records_thirty = Order.objects.filter(created_at__gt = thirty_days_ago)
+#     # all_order = Order.objects.all()
+#     if not filter_records.exists():
+#         return Response({"message":"There is no order record about seven days ago"})
+#     if not filters_records_thirty.exists():
+#         return Response({"message":"There is no order record about thirty days ago"})
+#     serializer_7 = OrderSerializer(filter_records,many=True)
+#     serializer_30 = OrderSerializer(filters_records_thirty,many=True)
+#     data={
+#         # "all_order":all_order,
+#         "last_7_days_orders":serializer_7.data,
+#         "last_30_days_orders":serializer_30.data,
+#         "Total_Course":course_count,
+#         "Total_Subject":subject_count,
+#         "Total_Mentor":total_mentor,
+#         "Total_Student":total_student,
+#     }
+#     return Response(data,status=status.HTTP_200_OK)    
 
 @api_view(['GET'])
 def count_view_set(request):
