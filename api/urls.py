@@ -2,7 +2,7 @@ from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 from course.views import courseImageView,subjectImageView
 from course import views
-from order.views import admin_dashboard_view,payment_cancel,payment_fail,payment_success,initiate_payment,admin_update_order_status,add_course_view,student_dashboard_view,teacher_dashboard_view,cancel_order,Enrollment_Delete_view,count_view_set,adminTeacherView,Enrollment_view,Enrollment_view_create,Order_view,order_view_set,admin_view_set,reviewCreate
+from order.views import admin_update_order_status,admin_dashboard_view,payment_cancel,payment_fail,payment_success,initiate_payment,admin_update_order_status,add_course_view,student_dashboard_view,teacher_dashboard_view,cancel_order,Enrollment_Delete_view,count_view_set,adminTeacherView,Enrollment_view,Enrollment_view_create,Order_view,order_view_set,admin_view_set,reviewCreate
 from rest_framework_nested import routers
 router = DefaultRouter()
 
@@ -40,7 +40,7 @@ urlpatterns = [
     path("payment/success/",payment_success,name="payment-success"),
     path("payment/fail/",payment_fail,name="payment-fail"),
     path("payment/cancel/",payment_cancel,name="payment-cancel"),
-
+    # path('dashboard/adminUpdateStatus/<int:order_id>/', views.admin_update_order_status, name='admin_update_order_status'),
    
     # path('review-create/',review_create,name="review-create")
 ]

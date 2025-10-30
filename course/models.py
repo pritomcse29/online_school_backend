@@ -9,8 +9,8 @@ class Subject(models.Model):
         return self.title
 class SubjectImage(models.Model):
     subject =  models.ForeignKey(Subject,on_delete=models.CASCADE,related_name='subjectImage')
-    image = models.ImageField(upload_to='subject/image')
-
+    # image = models.ImageField(upload_to='subject/image')
+    image = CloudinaryField('image')
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100,null=True,blank=True)
